@@ -2,7 +2,7 @@
 
 namespace UniversityMoodle.Services.Courses
 {
-    public interface ICourseRepository
+    public interface ICourseService
     {
         ICollection<Course> GetCourses();
         Course GetCourse(int id);
