@@ -6,7 +6,8 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 using UniversityMoodle.Data;
 using UniversityMoodle.Services.Courses;
-using UniversityMoodle.Services.User;
+using UniversityMoodle.Services.Roles;
+using UniversityMoodle.Services.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {

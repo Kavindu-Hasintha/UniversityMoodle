@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +8,8 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using UniversityMoodle.Dto;
 using UniversityMoodle.Models;
-using UniversityMoodle.Services.User;
+using UniversityMoodle.Services.Roles;
+using UniversityMoodle.Services.Users;
 
 namespace UniversityMoodle.Controllers
 {
@@ -16,11 +18,15 @@ namespace UniversityMoodle.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly IUserService _userRepository;
-        public AuthController(IConfiguration configuration, IUserService userRepository)
+        private readonly IUserService _userService;
+        private readonly IMapper _mapper;
+        private readonly IRoleService _roleService;
+        public AuthController(IConfiguration configuration, IUserService userService, IMapper mapper, IRoleService roleService)
         {
             _configuration = configuration;
-            _userRepository = userRepository;
+            _userService = userService;
+            _mapper = mapper;
+            _roleService = roleService;
         }
 
         [HttpPost("signup")]
@@ -52,7 +58,7 @@ namespace UniversityMoodle.Controllers
                 return StatusCode(422, ModelState);
             }
 
-            if (_userRepository.UserExist(userSignup.Email))
+            if (_userService.UserExist(userSignup.Email))
             {
                 ModelState.AddModelError("SignupError", "User already exists");
                 return StatusCode(422, ModelState);
@@ -63,9 +69,20 @@ namespace UniversityMoodle.Controllers
                 return BadRequest(ModelState);
             }
 
+            CreatePasswordHash(userSignup.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
+            var userMap = _mapper.Map<User>(userSignup);
+            userMap.PasswordHash = passwordHash;
+            userMap.PasswordSalt = passwordSalt;
+            userMap.Role = _roleService.GetRole(userSignup.Role);
 
-            return Ok();
+            if (!_userService.CreateUser(userMap))
+            {
+                ModelState.AddModelError("SignupError", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Registration Success");
         }
 
         private bool EmailValidation(string email)
