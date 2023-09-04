@@ -71,9 +71,13 @@ namespace UniversityMoodle.Controllers
 
             CreatePasswordHash(userSignup.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-            var userMap = _mapper.Map<User>(userSignup);
+            // var userMap = _mapper.Map<User>(userSignup);
+            var userMap = new User();
+            userMap.Name = userSignup.Name;
+            userMap.Email = userSignup.Email;
             userMap.PasswordHash = passwordHash;
             userMap.PasswordSalt = passwordSalt;
+            userMap.DoB = userSignup.DoB;
             userMap.Role = _roleService.GetRole(userSignup.Role);
 
             if (!_userService.CreateUser(userMap))

@@ -8,6 +8,7 @@ namespace UniversityMoodle.Dto
         public MappingProfiles() 
         {
             CreateMap<UserSignupDto, User>();
+            CreateMap<User, UserSignupDto>();
         }
     }
 }
