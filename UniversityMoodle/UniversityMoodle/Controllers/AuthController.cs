@@ -89,6 +89,8 @@ namespace UniversityMoodle.Controllers
             return Ok("Registration Success");
         }
 
+        // Login API
+
         private bool EmailValidation(string email)
         {
             var emailValidation = new EmailAddressAttribute();
