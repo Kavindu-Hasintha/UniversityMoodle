@@ -16,5 +16,10 @@ namespace UniversityMoodle.Services.Roles
         {
             return _context.Roles.Where(r => r.Name == name).FirstOrDefault();
         }
+
+        public Role GetRole(int id)
+        {
+            return _context.Roles.Where(r => r.Id == id).FirstOrDefault();
+        }
     }
 }

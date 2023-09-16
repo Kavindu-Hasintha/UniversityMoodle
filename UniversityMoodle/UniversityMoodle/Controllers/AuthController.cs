@@ -89,7 +89,41 @@ namespace UniversityMoodle.Controllers
             return Ok("Registration Success");
         }
 
-        // Login API
+        [HttpPost("login")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult Login([FromBody] UserLoginDto userLogin)
+        {
+            if (userLogin == null)
+            {
+                return BadRequest();
+            }
+
+            if (!EmailValidation(userLogin.Email))
+            {
+                ModelState.AddModelError("LoginError", "Invalid email address");
+                return StatusCode(422, ModelState);
+            }
+
+            var user = _userService.GetUsers().Where(u => u.Email.Trim().ToUpper() == userLogin.Email.TrimEnd().ToUpper()).FirstOrDefault();
+
+            if (user == null)
+            {
+                ModelState.AddModelError("LoginError", "Login failed");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!VerifyPasswordHash(userLogin.Password, user.PasswordHash, user.PasswordSalt))
+            {
+                return BadRequest("Login failed");
+            }
+
+            Role role = _userService.GetRole(user.Id);
+
+            string token = CreateToken(user, role.Name);
+
+            return Ok(new { token, role.Name });
+        }
 
         private bool EmailValidation(string email)
         {

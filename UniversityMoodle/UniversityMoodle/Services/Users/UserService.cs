@@ -27,5 +27,15 @@ namespace UniversityMoodle.Services.Users
             var saved = _context.SaveChanges();
             return saved > 0 ? true : false;
         }
+
+        public ICollection<User> GetUsers()
+        {
+            return _context.Users.OrderBy(x => x.Id).ToList();
+        }
+
+        public Role GetRole(int id)
+        {
+            return (Role)_context.Users.Where(u => u.Id == id).Select(u => u.Role).FirstOrDefault();
+        }
     }
 }
