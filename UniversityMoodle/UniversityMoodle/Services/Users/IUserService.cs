@@ -8,6 +8,8 @@ namespace UniversityMoodle.Services.Users
         bool UserExist(string email);
         bool CreateUser(User user);
         Role GetRole(int id);
+        string GetEmail();
+        User GetUser(string email);
         bool Save();
     }
 }

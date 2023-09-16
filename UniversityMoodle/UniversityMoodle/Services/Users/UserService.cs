@@ -1,4 +1,5 @@
-﻿using UniversityMoodle.Data;
+﻿using System.Security.Claims;
+using UniversityMoodle.Data;
 using UniversityMoodle.Models;
 
 namespace UniversityMoodle.Services.Users
@@ -6,9 +7,11 @@ namespace UniversityMoodle.Services.Users
     public class UserService : IUserService
     {
         private DataContext _context;
-        public UserService(DataContext context)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserService(DataContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public bool CreateUser(User user)
@@ -36,6 +39,21 @@ namespace UniversityMoodle.Services.Users
         public Role GetRole(int id)
         {
             return (Role)_context.Users.Where(u => u.Id == id).Select(u => u.Role).FirstOrDefault();
+        }
+
+        public string GetEmail()
+        {
+            string email = string.Empty;
+            if (_httpContextAccessor.HttpContext != null)
+            {
+                email = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email);
+            }
+            return email;
+        }
+
+        public User GetUser(string email)
+        {
+            return _context.Users.Where(u => u.Email == email).FirstOrDefault();
         }
     }
 }
