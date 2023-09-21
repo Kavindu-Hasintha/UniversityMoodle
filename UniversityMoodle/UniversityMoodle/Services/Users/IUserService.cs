@@ -10,6 +10,8 @@ namespace UniversityMoodle.Services.Users
         Role GetRole(int id);
         string GetEmail();
         User GetUser(string email);
+        ICollection<Course> GetCoursesByTeacher(int id);
+        ICollection<User> GetStudentsByTeacher(int id);
         bool Save();
     }
 }

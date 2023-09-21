@@ -10,6 +10,7 @@ namespace UniversityMoodle.Dto
             CreateMap<UserSignupDto, User>();
             CreateMap<User, UserSignupDto>();
             CreateMap<User, UserDto>();
+            CreateMap<Course, CourseDto>();
         }
     }
 }

@@ -55,5 +55,15 @@ namespace UniversityMoodle.Services.Users
         {
             return _context.Users.Where(u => u.Email == email).FirstOrDefault();
         }
+
+        public ICollection<Course> GetCoursesByTeacher(int id)
+        {
+            return _context.UserCourses.Where(uc => uc.StudentId == id).Select(c => c.Course).ToList();
+        }
+
+        public ICollection<User> GetStudentsByTeacher(int id)
+        {
+            return (ICollection<User>)_context.TeacherStudents.Where(ts => ts.TeacherId == id).Select(u => u.Student).ToList();
+        }
     }
 }
